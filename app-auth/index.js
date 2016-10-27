@@ -153,30 +153,6 @@ app.post('/signup', function(req, res) {
 	}));
 });
 
-function makeReq(method, url) {
-	var request = require('request');
-	request.get(url, {json: true, body: input}, function(err, res, body) {
-      if (!err && res.statusCode === 200) {
-          funcTwo(body, function(err, output) {
-              console.log(err, output);
-          });
-      }
-  });
-	// return new Promise(function(resolve, reject) {
-	// 	var xhr = new XMLHttpRequest();
-	// 	xhr.open(method, url);
-	// 	xhr.onload = function() {
-	// 		if(xhr.status === 200) {
-	// 			resolve(xhr.response);
-	// 		} else {
-	// 			console.log('ERROR');
-	// 		}
-	// 	};
-	// 	xhr.setRequestHeader('Authorization', 'Bearer FraTETTAR2iLz5vd5zIUCG0HirHDQkc4');
-	// 	xhr.send();
-	// });
-}
-
 app.get('/files', function(req, res) {
 
 	// Guard to make sure the user is logged in
@@ -190,22 +166,18 @@ app.get('/files', function(req, res) {
 	req.sdk.folders.getItems('0', null, function(err, data) {
 		fileArray = [];
 
-
 		data.entries.forEach(function(item, index){
 			promiseArray.push(new Promise(function(resolve, reject){
+
+				//pull metadata from files in folder
 				req.sdk.files.getAllMetadata(data.entries[index].id, function(err, data){
 					if (err) {
 						console.log("err", err);
 					}
 					var metaObject = {};
-					// console.log("data", data.entries[0]);
 					metaObject.lat = data.entries[0]['lat'];
 					metaObject.lng = data.entries[0]['lng'];
-					console.log("lat", metaObject.lat)
-					console.log("lng", metaObject.lng)
-					// console.log("object", metaObject)
 					fileArray.push(metaObject);
-					console.log("file array", fileArray)
 					resolve();
 				});
 			}))
@@ -219,27 +191,6 @@ app.get('/files', function(req, res) {
 				markers: fileArray
 			});
 		})
-		// for(var i=0; i<data.entries.length; i++ ) {
-		// 	var index = i,
-		// 		item = data.entries[i],
-		// 		promise = new Promise (resolve, reject) {
-		// 			req.sdk.files.getAllMetadata(data.entries[index].id, function(err, data){
-		// 				if (err) {
-		// 					console.log("err", err);
-		// 					reject();
-		// 				}
-		// 				// console.log("data", data.entries[0]);
-		// 				metaObject.lat = data.entries[0]['lat'];
-		// 				metaObject.lng = data.entries[0]['lng'];
-		// 				console.log("object", metaObject)
-		// 				fileArray.push(metaObject);
-		// 				resolve();
-		// 			});
-		// 		};
-		//
-		// }
-
-
 	});
 });
 
