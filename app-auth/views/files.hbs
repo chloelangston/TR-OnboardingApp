@@ -29,14 +29,14 @@
 <head>
   <style>
      #map {
-      height: 400px;
+      height: 600px;
       width: 100%;
      }
   </style>
 </head>
 <body>
   <h3>My Locations</h3>
-	<ul>
+	<ul style="position: absolute;">
 		{{#each markers as |marker|}}
 		<li class="markers">{{marker.lat}}|{{marker.lng}}</li>
 		{{/each}}
@@ -275,14 +275,20 @@
 					  }
 					]
 			});
+			var infowindow = new google.maps.InfoWindow({
+				content: 'test'
+			});
 			var icon = 'http://teamrubiconusa.org/app/uploads/2016/07/cropped-X_large-32x32.png'
 			pins.forEach(function(item, index){
-				console.log("item", item)
-				mapMarkers.push(new google.maps.Marker({
+				var marker = new google.maps.Marker({
 					position: item,
 					icon: icon,
 					map: map
-				}));
+				});
+
+				marker.addListener('click', function() {
+					infowindow.open(map, this);
+				});
 			})
 
 		}
