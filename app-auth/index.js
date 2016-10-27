@@ -153,6 +153,30 @@ app.post('/signup', function(req, res) {
 	}));
 });
 
+function makeReq(method, url) {
+	var request = require('request');
+	request.get(url, {json: true, body: input}, function(err, res, body) {
+      if (!err && res.statusCode === 200) {
+          funcTwo(body, function(err, output) {
+              console.log(err, output);
+          });
+      }
+  });
+	// return new Promise(function(resolve, reject) {
+	// 	var xhr = new XMLHttpRequest();
+	// 	xhr.open(method, url);
+	// 	xhr.onload = function() {
+	// 		if(xhr.status === 200) {
+	// 			resolve(xhr.response);
+	// 		} else {
+	// 			console.log('ERROR');
+	// 		}
+	// 	};
+	// 	xhr.setRequestHeader('Authorization', 'Bearer FraTETTAR2iLz5vd5zIUCG0HirHDQkc4');
+	// 	xhr.send();
+	// });
+}
+
 app.get('/files', function(req, res) {
 
 	// Guard to make sure the user is logged in
@@ -164,7 +188,63 @@ app.get('/files', function(req, res) {
 	// Get the user's files in their root folder.  Box uses folder ID "0" to
 	// represent the user's root folder, where we'll be putting all their files.
 	req.sdk.folders.getItems('0', null, function(err, data) {
+		console.log(data.entries[0].id);
+		// req.sdk.files.getMetadata(data.entries[0].id, req.sdk.metadata.scopes.ENTERPRISE, 'lat', function(err, data){
+		// 	if (err) {
+		// 		console.log(err);
+		// 	}
+		// 	console.log(data);
+		// });
 
+
+
+
+		var http = require("https");
+
+		var options = {
+		  "method": "GET",
+		  "hostname": "api.box.com",
+		  "port": null,
+		  "path": "/2.0/files/"+data.entries[0].id+"/content",
+		  "headers": {
+		    "authorization": "Bearer FraTETTAR2iLz5vd5zIUCG0HirHDQkc4",
+		    "cache-control": "no-cache"
+		  }
+		};
+
+		var req = http.request(options, function (res) {
+			console.log(res);
+		  // var chunks = [];
+			//
+		  // res.on("data", function (chunk) {
+		  //   chunks.push(chunk);
+		  // });
+			//
+		  // res.on("end", function () {
+		  //   var body = Buffer.concat(chunks);
+		  //   console.log(body.toString());
+		  // });
+		});
+
+		req.end();
+
+
+
+
+
+		// req.sdk.files.getReadStream(data.entries[0].id, null, function(error, stream) {
+		// 	if (error) {
+		// 		console.log(err);
+		// 	}
+		// 	console.log("stream", stream);
+		// 	// var output = fs.createWriteStream('file.csv');
+		// 	// console.log(stream.pipe(output));
+		// })
+		// makeReq('GET', 'https://api.box.com/2.0/files/' + data.entries[0].id + '/content')
+		// .then(function(data){
+		//
+		// 	console.log(data);
+		// })
 		res.render('files', {
 			error: err,
 			files: data ? data.entries: []
