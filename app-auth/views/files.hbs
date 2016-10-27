@@ -35,7 +35,7 @@
   </style>
 </head>
 <body>
-  <h3>My Google Maps Demo</h3>
+  <h3>My Locations</h3>
 	<ul>
 		{{#each markers as |marker|}}
 		<li class="markers">{{marker.lat}}|{{marker.lng}}</li>
@@ -45,7 +45,7 @@
   <script>
 		function initMap(markers) {
 			var mapMarkers = [];
-			var uluru = {lat: -25.363, lng: 131.044};
+			var greece = {lat: 39.0742, lng: 21.8243};
 			pins = [];
 			markers = document.getElementsByClassName('markers');
 			for(var i=0; i<markers.length; i++) {
@@ -55,12 +55,10 @@
 					lng = parseFloat(temp[1]);
 					pins.push({lat: lat, lng: lng});
 			}
-			// markers = [uluru];
-			// $('.markers').
-			console.log(pins);
+
 			var map = new google.maps.Map(document.getElementById('map'), {
-				zoom: 2,
-				center: uluru,
+				zoom: 4,
+				center: greece,
 				styles: [
 					  {
 					    "elementType": "geometry",

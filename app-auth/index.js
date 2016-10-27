@@ -189,7 +189,7 @@ app.get('/files', function(req, res) {
 	// represent the user's root folder, where we'll be putting all their files.
 	req.sdk.folders.getItems('0', null, function(err, data) {
 		fileArray = [];
-		metaObject = {};
+
 
 		data.entries.forEach(function(item, index){
 			promiseArray.push(new Promise(function(resolve, reject){
@@ -197,11 +197,15 @@ app.get('/files', function(req, res) {
 					if (err) {
 						console.log("err", err);
 					}
+					var metaObject = {};
 					// console.log("data", data.entries[0]);
 					metaObject.lat = data.entries[0]['lat'];
 					metaObject.lng = data.entries[0]['lng'];
+					console.log("lat", metaObject.lat)
+					console.log("lng", metaObject.lng)
 					// console.log("object", metaObject)
 					fileArray.push(metaObject);
+					console.log("file array", fileArray)
 					resolve();
 				});
 			}))
