@@ -37,19 +37,33 @@
 <body>
   <h3>My Google Maps Demo</h3>
 	<ul>
-
+		{{#each markers as |marker|}}
+		<li class="markers">{{marker.lat}}|{{marker.lng}}</li>
+		{{/each}}
 	</ul>
   <div id="map"></div>
   <script>
 		function initMap(markers) {
 			var mapMarkers = [];
 			var uluru = {lat: -25.363, lng: 131.044};
-			markers = [uluru];
+			pins = [];
+			markers = document.getElementsByClassName('markers');
+			for(var i=0; i<markers.length; i++) {
+				var node = markers[i],
+					temp = node.innerHTML.split('|'),
+					lat = parseFloat(temp[0]),
+					lng = parseFloat(temp[1]);
+					pins.push({lat: lat, lng: lng});
+			}
+			// markers = [uluru];
+			// $('.markers').
+			console.log(pins);
 			var map = new google.maps.Map(document.getElementById('map'), {
 				zoom: 4,
 				center: uluru
 			});
-			markers.forEach(function(item, index){
+			pins.forEach(function(item, index){
+				console.log("item", item)
 				mapMarkers.push(new google.maps.Marker({
 					position: item,
 					map: map

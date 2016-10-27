@@ -184,30 +184,37 @@ app.get('/files', function(req, res) {
 		res.redirect('/');
 		return;
 	}
-
+	var promiseArray = [];
 	// Get the user's files in their root folder.  Box uses folder ID "0" to
 	// represent the user's root folder, where we'll be putting all their files.
 	req.sdk.folders.getItems('0', null, function(err, data) {
 		fileArray = [];
 		metaObject = {};
-		var promises = [];
+
 		data.entries.forEach(function(item, index){
-			req.sdk.files.getAllMetadata(data.entries[index].id, function(err, data){
-				if (err) {
-					console.log("err", err);
-				}
-				// console.log("data", data.entries[0]);
-				metaObject.lat = data.entries[0]['lat'];
-				metaObject.lng = data.entries[0]['lng'];
-				// console.log("object", metaObject)
-				fileArray.push(metaObject);
-				console.log(fileArray);
-
-
-
-			});
-
+			promiseArray.push(new Promise(function(resolve, reject){
+				req.sdk.files.getAllMetadata(data.entries[index].id, function(err, data){
+					if (err) {
+						console.log("err", err);
+					}
+					// console.log("data", data.entries[0]);
+					metaObject.lat = data.entries[0]['lat'];
+					metaObject.lng = data.entries[0]['lng'];
+					// console.log("object", metaObject)
+					fileArray.push(metaObject);
+					resolve();
+				});
+			}))
 		});
+
+		Promise.all(promiseArray)
+		.then(function(){
+			res.render('files', {
+				error: err,
+				files: data ? data.entries: [],
+				markers: fileArray
+			});
+		})
 		// for(var i=0; i<data.entries.length; i++ ) {
 		// 	var index = i,
 		// 		item = data.entries[i],
@@ -228,11 +235,7 @@ app.get('/files', function(req, res) {
 		//
 		// }
 
-		res.render('files', {
-			error: err,
-			files: data ? data.entries: [],
-			markers: fileArray
-		});
+
 	});
 });
 
