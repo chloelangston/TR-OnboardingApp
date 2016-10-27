@@ -14,12 +14,12 @@ var express = require('express'),
 // Application Parameters - Fill in with your app's values
 // ------------------------------------------------------------------------------
 
-var CLIENT_ID = 'ov4t6s6ycl96y3agjlni6rjtleube37y',
-	CLIENT_SECRET = 'NxGSg2OzCzjnwo1b3H3ibOySaPX0kuxI',
-	PUBLIC_KEY_ID = 'q39kmzjx',
+var CLIENT_ID = '7wr6p44i0sy37c48jfqidtrqpjgvs2ec',
+	CLIENT_SECRET = 'FWqWu1agI4HPRUioeWedn2vxGcnhvp3c',
+	PUBLIC_KEY_ID = 'puydl0vt',
 	PRIVATE_KEY_PATH = './jwt/private_key.pem',
 	PRIVATE_KEY_PASSPHRASE = 'rubicon',
-	ENTERPRISE_ID = '6178419';
+	ENTERPRISE_ID = '894082';
 
 // Set up Express and the Box SDK
 var app = express(),
