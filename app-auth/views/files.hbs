@@ -32,32 +32,70 @@
       height: 600px;
       width: 100%;
      }
+     table th {
+		background-color: rgba(5, 94, 164, 0.9);
+		color: white;
+		vertical-align: top;
+	}
+	table td, table th{
+  		border: 1px solid #ddd;
+  		text-align: left;
+  		padding: 8px
+	}
+	table tr:nth-child(even){
+  		background-color: #f2f2f2
+	}
+     table {
+     	border: 1px solid #ddd;
+  		text-align: left;
+  		padding: 8px
+     }
   </style>
 </head>
 <body>
   <h3>My Locations</h3>
-	<ul style="position: absolute;">
+	<ul style="position: absolute; left: -999em;">
 		{{#each markers as |marker|}}
-		<li class="markers">{{marker.lat}}|{{marker.lng}}</li>
+		<li class="markers">{{marker.lat}}|{{marker.lng}}|{{marker.projectStartDate}}|{{marker.worksiteName}}|{{marker.worksiteType}}|{{marker.resourcesNeeded}}</li>
 		{{/each}}
 	</ul>
   <div id="map"></div>
   <script>
+  	function getInfoWindowContent(marker) {
+  		return '<h4>' + marker.worksiteName + '</h4>' +
+  			'<table>'+
+  			'<tr><th>Project Start Date</th><td>'+marker.projectStartDate+'</td></tr>' +
+  			'<tr><th>Worksite Type</th><td>'+marker.worksiteType+'</td></tr>' +
+  			'<tr><th>Resources Needed</th><td>'+marker.resourcesNeeded+'</td></tr>' +
+  			'</table>';
+  	}
 		function initMap(markers) {
 			var mapMarkers = [];
-			var greece = {lat: 39.0742, lng: 21.8243};
+			var greece = {lat: 40.71054, lng: 22.95957};
 			pins = [];
 			markers = document.getElementsByClassName('markers');
 			for(var i=0; i<markers.length; i++) {
 				var node = markers[i],
 					temp = node.innerHTML.split('|'),
 					lat = parseFloat(temp[0]),
-					lng = parseFloat(temp[1]);
-					pins.push({lat: lat, lng: lng});
+					lng = parseFloat(temp[1]),
+					projectStartDate = temp[2],
+					worksiteName = temp[3],
+					worksiteType = temp[4],
+					resourcesNeeded = temp[5];
+
+					pins.push({
+						lat: lat,
+						lng: lng,
+						projectStartDate: projectStartDate,
+						worksiteName:worksiteName,
+						worksiteType:worksiteType,
+						resourcesNeeded:resourcesNeeded
+					});
 			}
 
 			var map = new google.maps.Map(document.getElementById('map'), {
-				zoom: 4,
+				zoom: 10,
 				center: greece,
 				styles: [
 					  {
@@ -275,9 +313,7 @@
 					  }
 					]
 			});
-			var infowindow = new google.maps.InfoWindow({
-				content: 'test'
-			});
+			// var infowindow = new google.maps.InfoWindow({});
 			var icon = 'http://teamrubiconusa.org/app/uploads/2016/07/cropped-X_large-32x32.png'
 			pins.forEach(function(item, index){
 				var marker = new google.maps.Marker({
@@ -285,9 +321,23 @@
 					icon: icon,
 					map: map
 				});
+				
+				marker.projectStartDate = item.projectStartDate;
+				marker.worksiteName = item.worksiteName;
+				marker.worksiteType = item.worksiteType;
+				marker.resourcesNeeded = item.resourcesNeeded;
 
-				marker.addListener('click', function() {
-					infowindow.open(map, this);
+				marker.addListener('click', function(infowindow) {
+					var infowindow;
+					var marker = this;
+					var promise = new Promise(function(resolve, reject) {
+						infowindow = new google.maps.InfoWindow({});
+						resolve(infowindow);
+					});
+					promise.then(function(infowindow) {
+						infowindow.setContent(getInfoWindowContent(marker));
+						infowindow.open(map, marker);
+					});
 				});
 			})
 

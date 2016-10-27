@@ -174,9 +174,14 @@ app.get('/files', function(req, res) {
 					if (err) {
 						console.log("err", err);
 					}
+
 					var metaObject = {};
-					metaObject.lat = data.entries[0]['lat'];
-					metaObject.lng = data.entries[0]['lng'];
+					metaObject.lat = data.entries[0]['latitude'];
+					metaObject.lng = data.entries[0]['longitude'];
+					metaObject.projectStartDate = data.entries[0]['projectStartDate'];
+					metaObject.worksiteName = data.entries[0]['worksiteName'];
+					metaObject.worksiteType = data.entries[0]['worksiteType'];
+					metaObject.resourcesNeeded = data.entries[0]['resourcesNeeded'];
 					fileArray.push(metaObject);
 					resolve();
 				});
